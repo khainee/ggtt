@@ -1,9 +1,10 @@
 name: ci
 
-on:
-  push:
-    branches:
-      - 'main'
+on: workflow_dispatch
+
+env:
+  HEROKU_API_KEY: ${{ inputs.HEROKU_API_KEY }}
+  HEROKU_APP_NAME: ${{ input s.HEROKU_APP_NAME }}
 
 jobs:
   docker:
@@ -21,10 +22,10 @@ jobs:
         with:
           registry: registry.heroku.com
           username: _
-          password: ${{ secrets.HEROKU_API_KEY }}
+          password: ${HEROKU_API_KEY}
       -
         name: Build and push
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/worker
+          tags: registry.heroku.com/${HEROKU_APP_NAME}/worker
