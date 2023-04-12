@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  workflow_dispatch:
+    inputs:
+      HEROKU_API_KEY:
+        description: 'heroku api key ထည့်ပါ'
+        required: true
+      HEROKU_APP_NAME:
+        description: 'heroku websiteတွင် app createပြီးထိုappnameထည့်ပါ'
+        required: true
+env:
+  HEROKU_API_KEY: ${{ inputs.HEROKU_API_KEY }}
+  HEROKU_APP_NAME: ${{ inputs.HEROKU_APP_NAME }}
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          registry: registry.heroku.com
+          username: _
+          password: ${{ env.HEROKU_API_KEY }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: registry.heroku.com/${{ env.HEROKU_APP_NAME }}/worker
